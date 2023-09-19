@@ -1,0 +1,4 @@
+github.com/haya14busa/goplay v1.0.0 h1:ED4BMrGQ3WH7H3YXrcnWMVzj1xeSepaYTkLh1DtFi/4=
+github.com/haya14busa/goplay v1.0.0/go.mod h1:TUcdOVV7TTx0Fo9CmTf16Erfju/DzXTbB70+RYb43h8=
+github.com/skratchdot/open-golang v0.0.0-20200116055534-eef842397966 h1:JIAuq3EEf9cgbU6AtGPK4CTG3Zf6CKMNqf0MHTggAUA=
+github.com/skratchdot/open-golang v0.0.0-20200116055534-eef842397966/go.mod h1:sUM3LWHvSMaG192sy56D9F7CNvL7jUJVXoqM1QKLnog=

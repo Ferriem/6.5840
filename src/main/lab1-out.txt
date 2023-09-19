@@ -1,0 +1,470 @@
+*** Cannot find timeout command; proceeding without timeouts.
+*** Starting wc test.
+Coordinator initialized
+[Cooridinator] AllocateMapTask
+[Cooridinator] AllocateMapTask
+[Cooridinator] AllocateMapTask
+[Worker] MapTask Finished
+[Cooridinator] AllocateMapTask
+[Worker] MapTask Finished
+[Cooridinator] AllocateMapTask
+[Worker] MapTask Finished
+[Cooridinator] AllocateMapTask
+[Worker] MapTask Finished
+[Cooridinator] AllocateMapTask
+[Worker] MapTask Finished
+[Cooridinator] AllocateMapTask
+[Worker] MapTask Finished
+[Cooridinator] AllocateMapTask
+[Worker] MapTask Finished
+[Cooridinator] AllocateMapTask
+[Worker] MapTask Finished
+[Cooridinator] AllocateReduceTask
+[Worker] ReduceTask Finished
+[Cooridinator] AllocateReduceTask
+[Worker] ReduceTask Finished
+[Cooridinator] AllocateReduceTask
+[Worker] ReduceTask Finished
+[Cooridinator] AllocateReduceTask
+[Worker] ReduceTask Finished
+[Cooridinator] AllocateReduceTask
+[Worker] ReduceTask Finished
+[Cooridinator] AllocateReduceTask
+[Worker] ReduceTask Finished
+[Cooridinator] AllocateReduceTask
+[Worker] ReduceTask Finished
+[Cooridinator] AllocateReduceTask
+[Worker] ReduceTask Finished
+[Cooridinator] AllocateReduceTask
+[Worker] ReduceTask Finished
+[Cooridinator] AllocateReduceTask
+[Worker] ReduceTask Finished
+--- wc test: PASS
+*** Starting indexer test.
+Coordinator initialized
+[Cooridinator] AllocateMapTask
+[Cooridinator] AllocateMapTask
+[Worker] MapTask Finished
+[Cooridinator] AllocateMapTask
+[Worker] MapTask Finished
+[Cooridinator] AllocateMapTask
+[Worker] MapTask Finished
+[Cooridinator] AllocateMapTask
+[Worker] MapTask Finished
+[Cooridinator] AllocateMapTask
+[Worker] MapTask Finished
+[Cooridinator] AllocateMapTask
+[Worker] MapTask Finished
+[Cooridinator] AllocateMapTask
+[Worker] MapTask Finished
+[Cooridinator] AllocateMapTask
+[Worker] MapTask Finished
+[Cooridinator] AllocateReduceTask
+[Worker] ReduceTask Finished
+[Cooridinator] AllocateReduceTask
+[Worker] ReduceTask Finished
+[Cooridinator] AllocateReduceTask
+[Worker] ReduceTask Finished
+[Cooridinator] AllocateReduceTask
+[Worker] ReduceTask Finished
+[Cooridinator] AllocateReduceTask
+[Worker] ReduceTask Finished
+[Cooridinator] AllocateReduceTask
+[Worker] ReduceTask Finished
+[Cooridinator] AllocateReduceTask
+[Worker] ReduceTask Finished
+[Cooridinator] AllocateReduceTask
+[Worker] ReduceTask Finished
+[Cooridinator] AllocateReduceTask
+[Worker] ReduceTask Finished
+[Cooridinator] AllocateReduceTask
+[Worker] ReduceTask Finished
+--- indexer test: PASS
+*** Starting map parallelism test.
+Coordinator initialized
+[Cooridinator] AllocateMapTask
+[Cooridinator] AllocateMapTask
+[Worker] MapTask Finished
+[Worker] MapTask Finished
+[Cooridinator] AllocateMapTask
+[Cooridinator] AllocateMapTask
+[Worker] MapTask Finished
+[Worker] MapTask Finished
+[Cooridinator] AllocateMapTask
+[Cooridinator] AllocateMapTask
+[Worker] MapTask Finished
+[Worker] MapTask Finished
+[Cooridinator] AllocateMapTask
+[Cooridinator] AllocateMapTask
+[Worker] MapTask Finished
+[Worker] MapTask Finished
+[Cooridinator] AllocateReduceTask
+[Cooridinator] AllocateReduceTask
+[Worker] ReduceTask Finished
+[Worker] ReduceTask Finished
+[Cooridinator] AllocateReduceTask
+[Cooridinator] AllocateReduceTask
+[Worker] ReduceTask Finished
+[Worker] ReduceTask Finished
+[Cooridinator] AllocateReduceTask
+[Cooridinator] AllocateReduceTask
+[Worker] ReduceTask Finished
+[Worker] ReduceTask Finished
+[Cooridinator] AllocateReduceTask
+[Cooridinator] AllocateReduceTask
+[Worker] ReduceTask Finished
+[Worker] ReduceTask Finished
+[Cooridinator] AllocateReduceTask
+[Cooridinator] AllocateReduceTask
+[Worker] ReduceTask Finished
+[Worker] ReduceTask Finished
+--- map parallelism test: PASS
+*** Starting reduce parallelism test.
+Coordinator initialized
+[Cooridinator] AllocateMapTask
+[Cooridinator] AllocateMapTask
+[Worker] MapTask Finished
+[Worker] MapTask Finished
+[Cooridinator] AllocateMapTask
+[Cooridinator] AllocateMapTask
+[Worker] MapTask Finished
+[Worker] MapTask Finished
+[Cooridinator] AllocateMapTask
+[Cooridinator] AllocateMapTask
+[Worker] MapTask Finished
+[Worker] MapTask Finished
+[Cooridinator] AllocateMapTask
+[Cooridinator] AllocateMapTask
+[Worker] MapTask Finished
+[Worker] MapTask Finished
+[Cooridinator] AllocateReduceTask
+[Cooridinator] AllocateReduceTask
+[Worker] ReduceTask Finished
+[Worker] ReduceTask Finished
+[Cooridinator] AllocateReduceTask
+[Cooridinator] AllocateReduceTask
+[Worker] ReduceTask Finished
+[Cooridinator] AllocateReduceTask
+[Worker] ReduceTask Finished
+[Cooridinator] AllocateReduceTask
+[Worker] ReduceTask Finished
+[Worker] ReduceTask Finished
+[Cooridinator] AllocateReduceTask
+[Cooridinator] AllocateReduceTask
+[Worker] ReduceTask Finished
+[Cooridinator] AllocateReduceTask
+[Worker] ReduceTask Finished
+[Cooridinator] AllocateReduceTask
+[Worker] ReduceTask Finished
+[Cooridinator] AllocateReduceTask
+[Worker] ReduceTask Finished
+--- reduce parallelism test: PASS
+*** Starting job count test.
+Coordinator initialized
+[Cooridinator] AllocateMapTask
+[Cooridinator] AllocateMapTask
+[Worker] MapTask Finished
+[Cooridinator] AllocateMapTask
+[Worker] MapTask Finished
+[Cooridinator] AllocateMapTask
+[Worker] MapTask Finished
+[Cooridinator] AllocateMapTask
+[Worker] MapTask Finished
+[Cooridinator] AllocateMapTask
+[Worker] MapTask Finished
+[Cooridinator] AllocateMapTask
+[Worker] MapTask Finished
+[Cooridinator] AllocateMapTask
+[Worker] MapTask Finished
+[Cooridinator] AllocateMapTask
+[Cooridinator] AllocateMapTask
+[Cooridinator] AllocateMapTask
+[Cooridinator] AllocateMapTask
+[Cooridinator] AllocateMapTask
+[Worker] MapTask Finished
+[Cooridinator] AllocateReduceTask
+[Worker] ReduceTask Finished
+[Cooridinator] AllocateReduceTask
+[Worker] ReduceTask Finished
+[Cooridinator] AllocateReduceTask
+[Worker] ReduceTask Finished
+[Cooridinator] AllocateReduceTask
+[Worker] ReduceTask Finished
+[Cooridinator] AllocateReduceTask
+[Worker] ReduceTask Finished
+[Cooridinator] AllocateReduceTask
+[Worker] ReduceTask Finished
+[Cooridinator] AllocateReduceTask
+[Worker] ReduceTask Finished
+[Cooridinator] AllocateReduceTask
+[Worker] ReduceTask Finished
+[Cooridinator] AllocateReduceTask
+[Worker] ReduceTask Finished
+[Cooridinator] AllocateReduceTask
+[Worker] ReduceTask Finished
+--- job count test: PASS
+*** Starting early exit test.
+Coordinator initialized
+[Cooridinator] AllocateMapTask
+[Cooridinator] AllocateMapTask
+[Cooridinator] AllocateMapTask
+[Worker] MapTask Finished
+[Cooridinator] AllocateMapTask
+[Worker] MapTask Finished
+[Cooridinator] AllocateMapTask
+[Worker] MapTask Finished
+[Cooridinator] AllocateMapTask
+[Worker] MapTask Finished
+[Worker] MapTask Finished
+[Cooridinator] AllocateMapTask
+[Cooridinator] AllocateMapTask
+[Worker] MapTask Finished
+[Cooridinator] AllocateMapTask
+[Worker] MapTask Finished
+[Worker] MapTask Finished
+[Cooridinator] AllocateReduceTask
+[Cooridinator] AllocateReduceTask
+[Worker] ReduceTask Finished
+[Worker] ReduceTask Finished
+[Cooridinator] AllocateReduceTask
+[Cooridinator] AllocateReduceTask
+[Worker] ReduceTask Finished
+[Cooridinator] AllocateReduceTask
+[Worker] ReduceTask Finished
+[Cooridinator] AllocateReduceTask
+[Worker] ReduceTask Finished
+[Cooridinator] AllocateReduceTask
+[Cooridinator] AllocateReduceTask
+[Worker] ReduceTask Finished
+[Cooridinator] AllocateReduceTask
+[Worker] ReduceTask Finished
+[Cooridinator] AllocateReduceTask
+[Worker] ReduceTask Finished
+[Cooridinator] AllocateReduceTask
+[Cooridinator] AllocateReduceTask
+[Worker] ReduceTask Finished
+[Worker] ReduceTask Finished
+--- early exit test: PASS
+*** Starting crash test.
+Coordinator initialized
+[Cooridinator] AllocateMapTask
+[Cooridinator] AllocateMapTask
+[Cooridinator] AllocateMapTask
+[Cooridinator] AllocateMapTask
+[Cooridinator] AllocateMapTask
+[Cooridinator] AllocateMapTask
+[Worker] MapTask Finished
+[Cooridinator] AllocateMapTask
+[Worker] MapTask Finished
+[Cooridinator] AllocateMapTask
+[Cooridinator] AllocateMapTask
+[Worker] MapTask Finished
+[Cooridinator] AllocateMapTask
+[Cooridinator] AllocateMapTask
+[Cooridinator] AllocateMapTask
+[Cooridinator] AllocateMapTask
+[Cooridinator] AllocateMapTask
+[Cooridinator] AllocateMapTask
+[Cooridinator] AllocateMapTask
+[Cooridinator] AllocateMapTask
+[Cooridinator] AllocateMapTask
+[Cooridinator] AllocateMapTask
+[Cooridinator] AllocateMapTask
+[Cooridinator] AllocateMapTask
+[Cooridinator] AllocateMapTask
+[Worker] MapTask Finished
+[Cooridinator] AllocateMapTask
+[Cooridinator] AllocateMapTask
+[Cooridinator] AllocateMapTask
+[Cooridinator] AllocateMapTask
+[Cooridinator] AllocateMapTask
+[Cooridinator] AllocateMapTask
+[Cooridinator] AllocateMapTask
+[Cooridinator] AllocateMapTask
+[Worker] MapTask Finished
+[Cooridinator] AllocateMapTask
+[Cooridinator] AllocateMapTask
+[Cooridinator] AllocateMapTask
+[Cooridinator] AllocateMapTask
+[Cooridinator] AllocateMapTask
+[Cooridinator] AllocateMapTask
+[Cooridinator] AllocateMapTask
+[Cooridinator] AllocateMapTask
+[Cooridinator] AllocateMapTask
+[Cooridinator] AllocateMapTask
+[Cooridinator] AllocateMapTask
+[Worker] MapTask Finished
+[Cooridinator] AllocateMapTask
+[Cooridinator] AllocateMapTask
+[Cooridinator] AllocateMapTask
+[Cooridinator] AllocateMapTask
+[Cooridinator] AllocateMapTask
+[Cooridinator] AllocateMapTask
+[Cooridinator] AllocateMapTask
+[Cooridinator] AllocateMapTask
+[Cooridinator] AllocateMapTask
+[Cooridinator] AllocateMapTask
+[Cooridinator] AllocateMapTask
+[Cooridinator] AllocateMapTask
+[Cooridinator] AllocateMapTask
+[Cooridinator] AllocateMapTask
+[Cooridinator] AllocateMapTask
+[Cooridinator] AllocateMapTask
+[Cooridinator] AllocateMapTask
+[Cooridinator] AllocateMapTask
+[Cooridinator] AllocateMapTask
+[Cooridinator] AllocateMapTask
+[Cooridinator] AllocateMapTask
+[Cooridinator] AllocateMapTask
+[Cooridinator] AllocateMapTask
+[Cooridinator] AllocateMapTask
+[Worker] MapTask Finished
+[Cooridinator] AllocateMapTask
+[Cooridinator] AllocateMapTask
+[Cooridinator] AllocateMapTask
+[Cooridinator] AllocateMapTask
+[Cooridinator] AllocateMapTask
+[Cooridinator] AllocateMapTask
+[Cooridinator] AllocateMapTask
+[Cooridinator] AllocateMapTask
+[Cooridinator] AllocateMapTask
+[Cooridinator] AllocateMapTask
+[Cooridinator] AllocateMapTask
+[Cooridinator] AllocateMapTask
+[Cooridinator] AllocateMapTask
+[Cooridinator] AllocateMapTask
+[Cooridinator] AllocateMapTask
+[Cooridinator] AllocateMapTask
+[Worker] MapTask Finished
+[Cooridinator] AllocateReduceTask
+[Worker] ReduceTask Finished
+[Cooridinator] AllocateReduceTask
+[Worker] ReduceTask Finished
+[Cooridinator] AllocateReduceTask
+[Cooridinator] AllocateReduceTask
+[Worker] ReduceTask Finished
+[Cooridinator] AllocateReduceTask
+[Worker] ReduceTask Finished
+[Cooridinator] AllocateReduceTask
+[Cooridinator] AllocateReduceTask
+[Worker] ReduceTask Finished
+[Cooridinator] AllocateReduceTask
+[Worker] ReduceTask Finished
+[Cooridinator] AllocateReduceTask
+[Worker] ReduceTask Finished
+[Cooridinator] AllocateReduceTask
+[Cooridinator] AllocateReduceTask
+[Cooridinator] AllocateReduceTask
+[Cooridinator] AllocateReduceTask
+[Cooridinator] AllocateReduceTask
+[Cooridinator] AllocateReduceTask
+[Cooridinator] AllocateReduceTask
+[Cooridinator] AllocateReduceTask
+[Cooridinator] AllocateReduceTask
+[Cooridinator] AllocateReduceTask
+[Cooridinator] AllocateReduceTask
+[Cooridinator] AllocateReduceTask
+[Cooridinator] AllocateReduceTask
+[Cooridinator] AllocateReduceTask
+[Cooridinator] AllocateReduceTask
+[Cooridinator] AllocateReduceTask
+[Cooridinator] AllocateReduceTask
+[Worker] ReduceTask Finished
+[Cooridinator] AllocateReduceTask
+[Cooridinator] AllocateReduceTask
+[Cooridinator] AllocateReduceTask
+[Cooridinator] AllocateReduceTask
+[Cooridinator] AllocateReduceTask
+[Cooridinator] AllocateReduceTask
+[Cooridinator] AllocateReduceTask
+[Cooridinator] AllocateReduceTask
+[Cooridinator] AllocateReduceTask
+[Cooridinator] AllocateReduceTask
+[Cooridinator] AllocateReduceTask
+[Cooridinator] AllocateReduceTask
+[Cooridinator] AllocateReduceTask
+[Cooridinator] AllocateReduceTask
+[Cooridinator] AllocateReduceTask
+[Cooridinator] AllocateReduceTask
+[Cooridinator] AllocateReduceTask
+[Cooridinator] AllocateReduceTask
+[Cooridinator] AllocateReduceTask
+[Cooridinator] AllocateReduceTask
+[Cooridinator] AllocateReduceTask
+[Cooridinator] AllocateReduceTask
+[Cooridinator] AllocateReduceTask
+[Cooridinator] AllocateReduceTask
+[Cooridinator] AllocateReduceTask
+[Cooridinator] AllocateReduceTask
+[Cooridinator] AllocateReduceTask
+[Cooridinator] AllocateReduceTask
+[Cooridinator] AllocateReduceTask
+[Cooridinator] AllocateReduceTask
+[Cooridinator] AllocateReduceTask
+[Cooridinator] AllocateReduceTask
+[Cooridinator] AllocateReduceTask
+[Cooridinator] AllocateReduceTask
+[Cooridinator] AllocateReduceTask
+[Cooridinator] AllocateReduceTask
+[Cooridinator] AllocateReduceTask
+[Cooridinator] AllocateReduceTask
+[Cooridinator] AllocateReduceTask
+[Cooridinator] AllocateReduceTask
+[Cooridinator] AllocateReduceTask
+[Cooridinator] AllocateReduceTask
+[Worker] ReduceTask Finished
+[Cooridinator] AllocateReduceTask
+[Cooridinator] AllocateReduceTask
+[Cooridinator] AllocateReduceTask
+[Cooridinator] AllocateReduceTask
+[Cooridinator] AllocateReduceTask
+[Cooridinator] AllocateReduceTask
+[Cooridinator] AllocateReduceTask
+[Cooridinator] AllocateReduceTask
+[Cooridinator] AllocateReduceTask
+[Cooridinator] AllocateReduceTask
+[Cooridinator] AllocateReduceTask
+[Cooridinator] AllocateReduceTask
+[Cooridinator] AllocateReduceTask
+[Cooridinator] AllocateReduceTask
+[Cooridinator] AllocateReduceTask
+[Cooridinator] AllocateReduceTask
+[Cooridinator] AllocateReduceTask
+[Cooridinator] AllocateReduceTask
+[Cooridinator] AllocateReduceTask
+[Cooridinator] AllocateReduceTask
+[Cooridinator] AllocateReduceTask
+[Cooridinator] AllocateReduceTask
+[Cooridinator] AllocateReduceTask
+[Cooridinator] AllocateReduceTask
+[Cooridinator] AllocateReduceTask
+[Cooridinator] AllocateReduceTask
+[Cooridinator] AllocateReduceTask
+[Cooridinator] AllocateReduceTask
+[Cooridinator] AllocateReduceTask
+[Cooridinator] AllocateReduceTask
+[Cooridinator] AllocateReduceTask
+[Cooridinator] AllocateReduceTask
+[Cooridinator] AllocateReduceTask
+[Cooridinator] AllocateReduceTask
+[Cooridinator] AllocateReduceTask
+[Cooridinator] AllocateReduceTask
+[Cooridinator] AllocateReduceTask
+[Cooridinator] AllocateReduceTask
+[Cooridinator] AllocateReduceTask
+[Cooridinator] AllocateReduceTask
+[Cooridinator] AllocateReduceTask
+[Cooridinator] AllocateReduceTask
+[Cooridinator] AllocateReduceTask
+[Cooridinator] AllocateReduceTask
+[Cooridinator] AllocateReduceTask
+[Cooridinator] AllocateReduceTask
+[Cooridinator] AllocateReduceTask
+[Cooridinator] AllocateReduceTask
+[Cooridinator] AllocateReduceTask
+[Cooridinator] AllocateReduceTask
+[Cooridinator] AllocateReduceTask
+[Cooridinator] AllocateReduceTask
+[Worker] ReduceTask Finished
+--- crash test: PASS
+*** PASSED ALL TESTS
