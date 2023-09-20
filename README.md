@@ -14,7 +14,7 @@ GFS: [Lecture](md/lecture-3.md)
 
 Primary-Backup Replication: [Lecture](md/Lecture-4.md)
 
-Raft: [Lecture](md/Lecture-5.md)
+Raft: [Lecture](md/Lecture-5.md) 
 
 [Lab](md/Lab-2.md) 
 
