@@ -12,7 +12,7 @@ type ApplyMsg struct {
 	SnapshotIndex int
 }
 
-// continuely commit entries
+// continuely apply entries
 func (rf *Raft) committer() {
 	rf.mu.Lock()
 	for !rf.killed() {
