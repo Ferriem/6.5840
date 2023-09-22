@@ -58,7 +58,7 @@ A Raft cluster conntains several servers; fives is a typical number, which allow
 - Each term begin with a *election*. If a candidate wins the election, then it serves as leader for the rest of the term.
 - Each **server stores a *current term* number**, which increases monotonically over time. Current terms are **exchanged whenever servers communicate**; if one server's current term is smaller than the other's, then it updates its current term to the larger value. If a candidate or leader discovers that its term is **out of date**, it immediately **reverts to follower state**. If a server receivers a request with a **stale term number**, it **rejects** the request.
 
-#### Leader election
+#### Leader election (Lab 2A)
 
 Raft uses a heartbeat mechanism to trigger leader election. When servers start up, they **begin as followers**. A server remains in follower state as long as it receives valid RPCs from a leader or candidate. Leaders send periodic heartbeadts to all followers in order to maintain their authority. If a follower receives no communication over a period of time called the *election timeout*, then it assumes there is no visable leader and **begins an election to choose a new leader**.
 
@@ -73,9 +73,9 @@ Election:
   - Another server establishes itself as leader
   - a period of time goes by with no winner.
 
-#### Log replication
+#### Log replication (Lab 2B)
 
-Each client request contains a command to be executed by the replicated state machines. The leader **appends the command to its log** as a new entry, then **issues AppendEntries RPCs** in parallel to each of the other servers to replicate the entry . When the entry has been safely replicated, the leader applies the entry to its state machine and returns the result of the execution to the client. If anything wrong happen, the leader retries AppendEntries RPCs infinitely util all followers eventually store all log entries.![log](/Users/ferriem/Desktop/ferriem/6.5840/md/image/log.png)
+Each client request contains a command to be executed by the replicated state machines. The leader **appends the command to its log** as a new entry, then **issues AppendEntries RPCs** in parallel to each of the other servers to replicate the entry . When the entry has been safely replicated, the leader applies the entry to its state machine and returns the result of the execution to the client. If anything wrong happen, the leader retries AppendEntries RPCs infinitely util all followers eventually store all log entries.![log](image/log.png)
 
 - In Raft the leader handles inconsistencies by forcing the followes's llogs to duplicate its own. **Conflicting entries in follower logs will be overwritten with entries from leader's log**.
   - The leader must fine the latest log entry where the two logs agree. The leader maintains a *nextIndex* for each follower, which is the index of the next log entry the leader will send to that follower.
@@ -93,7 +93,66 @@ Each client request contains a command to be executed by the replicated state ma
 
   Raft detemines which of two logs is more up-to-date by comparing the index and term of the last entries in the logs. First compare the term, if equal, compare the length of log.
 
+- Committing entries from previous terms
+
+  Raft never commits log entries from previous terms by counting replicas. Only log entries from the leader's current term are committed by counting replicas; once an entry from the current term has been committed in this way, then all prior entries are committed indirectly because of the Log Matching Property.
+
 - Time
+
+  MTBF is the average time between failures for a single server
   $$
   broadcastTime << electionTimeout << MTBF
   $$
+
+#### *Cluster membership changes
+
+In practice, configuration will occasionally be necessary to change the configuration. Eg. When the cluster grows from three servers to five. There is a point in time where two different leaders can be elected for the same term, one with a majority of the old configuration, and another with a majority of the new configuration.
+
+In order to ensure safety, configuration changes must use a two-phase approach.
+
+In Raft the cluster first switches to a transitional configuration we called **joint consensus**, once the joint consensus has been committed, the system then transitions to the new configuration. The system then transitions to the new configuration.
+
+Joint consensus
+
+- Log entries are replicated to all servers in both configurations.
+- Any server from either configuration may serve as leader.
+- Agreement requires separate majorities from both the old and new configurations.
+
+There are three more issues to address for reconfiguration. 
+
+- The first issue is that new servers may not initially store any log entires. If. they are added to the cluster in this state, it could take a while for them to catch up. In order to avoid avaliability gaps, Raft introduces an additional phase before configuration changes, in which the new servers join the cluster as **non-voting members**, once the new servers have caught up with the rest of the cluster, the reconfiguration can proceed.
+- The second issue is that the cluster leader may not be part of the new configuration. This means that there will be a period of time when the leader is managing a cluster that does not include itself; it replicates log entries but does not count itself in majorities. In this case, the leader steps down to follower state once it has commmitted new configuration log entry.
+- The third issue is that removed servers can disrupt the cluster. These servers will not receive heartbeats, so they will time out and start new elections. They will then send RequestVote RPCs with new term numbers, and this will cause the current leader to revert to follower state. To prevent this problem, servers **disregard RequestVote PRCs when they believe a current leader** exists. Specifically, if a sever receives a RequestVote RPC within the minimum election timeout of hearing from a current leader, it does not update its term or grant its vote. This does not affect normal elections. However, it helps avoid disruptions from removed servers.
+
+#### Log compaction (Lab 2D)
+
+In practical syste, log cannot grow without bound. As the log grows longer, it occupies more space and takes more time to reply. This will eventually cause availability problems without some emechanism to discard obsolete information that has accumulated in the log.
+
+Snapshotting is the simplest approach to compaction. In snapshotting, the entire current system state is written to a *snapshot* on stable storage, **then the entire log up to that point is discarded**.
+
+![snapshot](image/snapshot.png)
+
+Each server takes snapshots independently, covering just the committed entires in its log. Most of the work consists of the state machine writing its current state to the snapshot. Raft also includes a small amount of metadata in the snapshot: the **last inluded index** is the index of the last entry in the log that the snapshot replaces(the last entry the state machine had applied), and the **last included term** is the term of this entry. These are preserved to support the AppendEntries consistency check for the first log entry following the snapshot, since that entry needs a previous log index and term. To enable cluster membership changes, the snapshot also includes the latest configuration in the log as of last included index. Once a server completes writing a snapshot, it may delete all log entries up through the last included index, as well as any prior snapshot.
+
+The leader must **occasionally send snapshots to followers** that lag behind. This happends when the leader has already discarded the next log entry that it needs to send to a follower. 
+
+The leader uses a new RPC called **InstallSnapshot** to send snapshots to followers that are too far behind. When a follower receives a snapshot with this RPC, it must decide what to do with its existing log entries. Usually the snapshot will contain new information not already in the recipient's log. In this case, the follower **discards its entire log**. It is all superseded by the snapshot and may possibly have uncommitted entries that conflict with the snapshot. If instead the follower receives a snapshot that describes a prefix of its log, then **log entries coverd by the snapshot are deleted** but entries following thesnapshot are still valid and must be retained.
+
+![snapshotargs](image/snapshotargs.png)
+
+Servers must decide when to snapshot. One simply strategy is to t**ake a snapshot when the log reaches a fixed size in bytes**. If this size is set to be significantly larger than the expected size of a snapshot, then the disk bandwidth overhead for snapshotting will be small.
+
+Writing a snapshot can take a significant amoun of time, and we do not want this to delay normal operations. The solution is to use **copy-on-write** techniques so that new updates can be accepted without impacting the snapshot being written.
+
+#### Client interaction
+
+Introduce how clients find the cluster leader and how Raft support linearizable semantics.
+
+Clients of Raft send all of their requests to the leader. When a client first starts up, it connects to a randomly chosen server. If the client;s first choicec is not the leader, that server will reject the client's request and supply information about the most recent leader it has heard from.
+
+If a leader crashes after committing the log entry but before responding to the client, the client will retry the command with a new leader, causing it to be executed a second time. The solution is for clients to assign unique serial numbers to every command. Then, the state machine tracks the latest sociated response. If it receives a command whose serial number has already been executed, it responds immediately without re-executing the request.
+
+**Read-only operations**: the leader respond to the operation might have been superseded by a newer leader. So that it will receive stale information.
+
+- Each leader commit a blank no-op entry into the log at the start of its term.
+- A leader must check whether it has been deposed before processing a read-only request. Raft handles this by having the leader exchange heartbeat messages with a majority of the cluster before responding to read-only requests.

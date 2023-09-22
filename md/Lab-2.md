@@ -173,3 +173,12 @@ Leader->>Leader: handleAppendEntries
 Note over Leader: wake up committer
 ```
 
+### C: Persistence
+
+A real implementation would write Raft's persistent state to disk each time it changed, and would read the satte from disk when restarting after a reboot.
+
+As we can see in figure 2, the persistent state on servers is currentTerm, votedFor and log entry.
+
+So that our `persist()` and `readpersist()` functions are clear, encode or decode the three major element. (The original code provide a example for us, we can just replace "xxx" with the element above).
+
+Another thing to think about is where to persist. Simply, everytime you modify the three elements, just run `persist()` after.
