@@ -7,7 +7,7 @@ for ((i=1; i<=num_instance; i++)); do
     (
     for((j=1; j<=count; j++)); do
         echo "Running iteration $j for instance $i"
-        time go test -run 2B -race
+        time go test -run 2C -race
     done
     wait
     ) &
