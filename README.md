@@ -17,4 +17,3 @@ Primary-Backup Replication: [Lecture](md/Lecture-4.md)
 Raft: [Lecture](md/Lecture-5.md) 
 
 [Lab](md/Lab-2.md) 
-
