@@ -1,5 +1,24 @@
 # 6.5840
 
+I create this repository after finishing log-replication. 
+
+The git branch information was provided below.
+
+```mermaid
+gitGraph
+	commit id: "update"
+  branch leader-election
+  commit id: "leader-election"
+  branch log-replication
+  commit id: "log-replication"
+  branch persist
+  commit id: "persist"
+  branch log-compaction
+  commit id: "log-compaction"
+```
+
+
+
 ### Lab 1: MapReduce
 
 Introduction: [Lecture](md/Lecture-1.md)
