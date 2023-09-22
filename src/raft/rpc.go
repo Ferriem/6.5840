@@ -29,6 +29,20 @@ type AppendEntriesArgs struct {
 	CommittedIndex int
 }
 
+type InstallSnapshotArgs struct {
+	From     int
+	To       int
+	Term     int
+	Snapshot Snapshot
+}
+
+type InstallSnapshotReply struct {
+	From    int
+	To      int
+	Term    int
+	Catchup bool
+}
+
 type Err int
 
 const (
@@ -51,10 +65,12 @@ type AppendEntriesReply struct {
 type MessageType string
 
 const (
-	Vote        MessageType = "RequestVote"
-	VoteReply   MessageType = "RequestVoteReply"
-	Append      MessageType = "AppendEntires"
-	AppendReply MessageType = "AppendEntriesReply"
+	Vote          MessageType = "RequestVote"
+	VoteReply     MessageType = "RequestVoteReply"
+	Append        MessageType = "AppendEntires"
+	AppendReply   MessageType = "AppendEntriesReply"
+	SnapShot      MessageType = "InstallSnapshot"
+	SnapShotReply MessageType = "InstallSnapshotReply"
 )
 
 type Message struct {
@@ -69,7 +85,7 @@ func (rf *Raft) checkTerm(m Message) (bool, bool) {
 	if m.Term < rf.currentTerm {
 		return false, false
 	}
-	if m.Term > rf.currentTerm || m.Type == Append {
+	if m.Term > rf.currentTerm || m.Type == Append || m.Type == SnapShot {
 		termChanged := rf.becomeFollower(m.Term)
 		return true, termChanged
 	}
@@ -87,18 +103,22 @@ func (rf *Raft) checkState(m Message) bool {
 		res = rf.state == Candidate && rf.currentTerm == m.ArgsTerm
 	case AppendReply:
 		res = rf.state == Leader && rf.currentTerm == m.ArgsTerm && rf.peerTrackers[m.From].nextIndex == m.PrevLogIndex+1
+	case SnapShot:
+		res = rf.state == Follower && !rf.log.needPendSnapshot
+	case SnapShotReply:
+		res = rf.state == Leader && rf.currentTerm == m.ArgsTerm && rf.lagBehind(m.From)
 	default:
 		DPrintf("term %d server %d receive unknown message type %s", rf.currentTerm, rf.me, m.Type)
 	}
 
-	if rf.state == Follower && m.Type == Append {
+	if rf.state == Follower && m.Type == Append || m.Type == SnapShot {
 		rf.resetElectionTimeout()
 	}
 	return res
 }
 
 func (rf *Raft) checkMessage(m Message) (bool, bool) {
-	if m.Type == VoteReply || m.Type == AppendReply {
+	if m.Type == VoteReply || m.Type == AppendReply || m.Type == SnapShotReply {
 		rf.peerTrackers[m.From].lastAck = time.Now()
 	}
 	ok, termChanged := rf.checkTerm(m)

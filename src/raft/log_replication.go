@@ -44,7 +44,10 @@ func (rf *Raft) broadcastAppendEntries(heartbeat bool) {
 		if i == rf.me {
 			continue
 		}
-		if heartbeat || rf.hasNewEntries(i) {
+		if rf.lagBehind(i) {
+			args := rf.makeInstallSnapShot(i)
+			go rf.sendInstallSnapshot(args)
+		} else if heartbeat || rf.hasNewEntries(i) {
 			args := rf.makeAppendEntriesArgs(i)
 			DPrintf("send append entries from %d to %d", rf.me, i)
 			go rf.sendAppendEntries(args)

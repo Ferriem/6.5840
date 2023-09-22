@@ -182,3 +182,78 @@ As we can see in figure 2, the persistent state on servers is currentTerm, voted
 So that our `persist()` and `readpersist()` functions are clear, encode or decode the three major element. (The original code provide a example for us, we can just replace "xxx" with the element above).
 
 Another thing to think about is where to persist. Simply, everytime you modify the three elements, just run `persist()` after.
+
+### D: log compaction
+
+As we talk in [Lecture5](Lecture-5.md), the log cannot grow infinitely, we need snapshot to record the previous state and shorten the log.
+
+The tester calls `Snapshot()` periodically, the snapshot will contian the complete table of key/value pairs. The server layer calls `Snapshot()` on every peer.
+
+There is a [figure](https://pdos.csail.mit.edu/6.824/notes/raft_diagram.pdf) to better understand log compaction.
+
+- [ ] Proper snapshot structure
+- [ ] InstallSnapshot RPC structure
+- [ ] `Snapshot()` implementation
+- [ ] Send InstallSnapshot to peers
+- [ ] Handle InstallSnapshotReply
+- [ ] Send snapshot to the service in an `ApplyMsg`
+- [ ] Persist the corresponding snapshot
+
+#### Proper snapshot structure
+
+As we can see in figure13, we need a `Index` to record the highest log entry that's reflected in the snapshot, `Term` represent the term of index stored in the log. Another thing is Data[].
+
+As we known, the snapshot is stored in the log, we need addtional argument in Log structure to record snapshot. What's more, we need a bool to record whether the snapshot need to pend to applyCh
+
+#### InstallSnapshot RPC structure
+
+Just like AppendEntires and RequestVote, according to figure 13, `InstallSnapshotArgs` we need leader's `Term`, `From`(leader index), and `To`, most significantly, the `snapshot` to be sent.
+
+Be careful that do not implement offset mechanism.
+
+We need `InstallSnapshotReply` to know the work state of InstallSnapshot. An additional bool to record whether the snapshot Installed correctly.
+
+#### `Snapshot()`
+
+The tester periodically call Snapshot to server. We need to compress log according to the snapshot. Remember to judge whether the snapshot is stale. Then replace the overlapped part with snapshot.
+
+When compacting snapshot, besides compress log, we also need to update `commitIndex` and `applied`
+
+#### InstallSnapshot
+
+InstallSnapshot RPC allows a Raft leader to tell a **lagging Raft peer** to replace its state with a snapshot. We can easily think of the leader broadcastAppendEntries which connects to peers. If the peer's snapshot is lag behind, send InstallSnapshot in **parallel** to tell them to update.
+
+We talked about lag behind. We can put snapshot information in the first index of log entry, and then the log behind judgement can be `rf.peers[to].nextIndex <= rf.log.firstIndex()`
+
+And when a server receive InstallSnapshot information. Check the message. If everything goes well, check the update message. If the server is already caughtup, return. Else, compact the log and return with need to pen.
+
+#### HandleSnapshot
+
+First check the message. And then update the matchIndex and nextIndex of peers. Now you can immediately send broadcastAppendEntries to update commit information of peers, or just wait the periodically check.
+
+#### Send snapshot to ApplyMsg
+
+We've said before, we have an argument represent the snapshot has updated. In **committer** where we commit command. Additionally add a check about snapshot pending, then **send it to applyCh**, **reset the state of the argument.**
+
+#### Persist snapshot
+
+If a server crashes, it must restart from persisted data. Raft should persist both Raft state and the corresponding snapshot. Don't forget to modify `persist.Save()`, the second argument is waiting for snapshot.
+
+When a server restarts, the application layer reads the persisted snapshot and  restore its saved state. In the code they provided, in `Make()`, there is `readPersist()`, we need to decode persist state and **compact snapshot**. An error message will pops up when you forget to compact the snapshot when `readPersist()`.
+
+```mermaid
+sequenceDiagram
+participant Tester
+participant Peer
+participant Leader
+Tester->>Peer: snapshot
+Peer->>Peer: log compact
+Leader->>Peer: check lagBehind
+Note over Leader,Peer: InstallSnapshot
+Note over Peer: committer apply snapshot to ApplyMsg
+Peer->>Leader: InstallSnapshotReply
+Note over Leader: update nextIndex and matchIndex
+
+
+```
+
