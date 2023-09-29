@@ -131,6 +131,8 @@ Solution
 - IndexNotMatched: leader's prevLogIndex out of range. Reply with the lastLogIndex to leader.
 - TermNotMatched: Disagreement occurs, find the firstConflictIndex to leader.
 
+  This situation means the specific term has something wrong, we need to find the first index of the term. And the leader will resend AppendEntries with modified nextIndex.
+
 #### Handle AppendEntriesReply
 
 Besides what we do in leader election, we need to check the state of log.
@@ -143,7 +145,8 @@ Besides what we do in leader election, we need to check the state of log.
 
   - Leader doesn't contain the conflict term's information: delete all the informations. (Modify nextIndex to FirstConflictIndex)
   - Leader's log contains the conflict term, modify nextIndex to leader's last Index of the term.
-
+  - [txt](https://pdos.csail.mit.edu/6.824/notes/l-raft2.txt) Here gave the detailed description of how to roll back quickly.
+  
   Then send appendEntries again to replicate log.
 
 #### Committer
@@ -170,7 +173,14 @@ Peer->>Peer: AppendEntries
 Note over Peer: log replication
 Note over Peer: wake up committer
 Leader->>Leader: handleAppendEntries
-Note over Leader: wake up committer
+critical Matched
+	Note over Leader: update, wake up committer
+option IndexNotMatched
+	Note over Leader: modify nextIndex
+option TermNotMatched
+	Note over Leader: modify nextIndex
+end
+Leader->>Peer: broadcastAppendEntries
 ```
 
 ### C: Persistence
