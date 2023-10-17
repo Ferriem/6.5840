@@ -17,6 +17,8 @@ gitGraph
   commit id: "log-compaction"
   branch kv-without-snapshot
   commit id: "kv-without-snapshot"
+  branch kv-with-snapshot
+  commit id: "kv-with-snapshot"
 ```
 
 
