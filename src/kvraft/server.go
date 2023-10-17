@@ -1,12 +1,13 @@
 package kvraft
 
 import (
-	"6.5840/labgob"
-	"6.5840/labrpc"
-	"6.5840/raft"
 	"log"
 	"sync"
 	"sync/atomic"
+
+	"6.5840/labgob"
+	"6.5840/labrpc"
+	"6.5840/raft"
 )
 
 const Debug = false
@@ -18,32 +19,30 @@ func DPrintf(format string, a ...interface{}) (n int, err error) {
 	return
 }
 
-
-type Op struct {
-	// Your definitions here.
-	// Field names must start with capital letters,
-	// otherwise RPC will break.
-}
-
 type KVServer struct {
-	mu      sync.Mutex
-	me      int
-	rf      *raft.Raft
-	applyCh chan raft.ApplyMsg
-	dead    int32 // set by Kill()
+	mu        sync.Mutex
+	me        int
+	rf        *raft.Raft
+	applyCh   chan raft.ApplyMsg
+	dead      int32 // set by Kill()
+	persister *raft.Persister
 
-	maxraftstate int // snapshot if log grows this big
+	maxraftstate          int // snapshot if log grows this big
+	maxAppliedOpIdofClerk map[int64]int
+	db                    map[string]string
+	NotifierOfClerk       map[int64]*Notifier
 
 	// Your definitions here.
 }
-
 
 func (kv *KVServer) Get(args *GetArgs, reply *GetReply) {
-	// Your code here.
+	op := Op{ClerkId: args.ClerkId, OpId: args.OpId, OpType: "Get", Key: args.Key}
+	reply.Err, reply.Value = kv.Applier(op)
 }
 
 func (kv *KVServer) PutAppend(args *PutAppendArgs, reply *PutAppendReply) {
-	// Your code here.
+	op := Op{ClerkId: args.ClerkId, OpId: args.OpId, OpType: args.OpType, Key: args.Key, Value: args.Value}
+	reply.Err, _ = kv.Applier(op)
 }
 
 // the tester calls Kill() when a KVServer instance won't
@@ -57,7 +56,6 @@ func (kv *KVServer) PutAppend(args *PutAppendArgs, reply *PutAppendReply) {
 func (kv *KVServer) Kill() {
 	atomic.StoreInt32(&kv.dead, 1)
 	kv.rf.Kill()
-	// Your code here, if desired.
 }
 
 func (kv *KVServer) killed() bool {
@@ -84,12 +82,18 @@ func StartKVServer(servers []*labrpc.ClientEnd, me int, persister *raft.Persiste
 
 	kv := new(KVServer)
 	kv.me = me
+	kv.persister = persister
 	kv.maxraftstate = maxraftstate
+
+	kv.db = make(map[string]string)
+	kv.maxAppliedOpIdofClerk = make(map[int64]int)
+	kv.NotifierOfClerk = map[int64]*Notifier{}
 
 	// You may need initialization code here.
 
 	kv.applyCh = make(chan raft.ApplyMsg)
 	kv.rf = raft.Make(servers, me, persister, kv.applyCh)
+	go kv.executor()
 
 	// You may need initialization code here.
 
