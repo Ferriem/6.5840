@@ -15,6 +15,8 @@ gitGraph
   commit id: "persist"
   branch log-compaction
   commit id: "log-compaction"
+  branch kv-without-snapshot
+  commit id: "kv-without-snapshot"
 ```
 
 
@@ -37,3 +39,10 @@ Raft: [Lecture](md/Lecture-5.md)
 
 [Lab](md/Lab-2.md) 
 
+### Lab 3:KV Service
+
+Linearizability: [Lecture](md/lecture-9.md)
+
+ZooKeeper: [Lecture](md/lecture-10.md)
+
+[Lab](md/Lab-3.md)
