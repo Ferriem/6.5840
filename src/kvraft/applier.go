@@ -6,8 +6,17 @@ func (kv *KVServer) executor() {
 			break
 		}
 		kv.mu.Lock()
-		op := m.Command.(Op)
-		kv.maybeApplyClientOp(op)
+		if m.SnapshotValid {
+			kv.readSnapShot(m.Snapshot)
+		} else {
+			op := m.Command.(Op)
+
+			kv.maybeApplyClientOp(op)
+
+			if kv.snapshotEnable && kv.approachLimit() {
+				kv.checkpoint(m.CommandIndex)
+			}
+		}
 		kv.mu.Unlock()
 	}
 }

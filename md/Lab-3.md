@@ -1,5 +1,7 @@
 ## Lab-3
 
+[diagram](https://pdos.csail.mit.edu/6.824/notes/raft_diagram.pdf)
+
 ### A: key/value service
 
 Now we need to build a FT key/value storage service using Raft. Implement `Put()`, `Get()`, `Append()`.
@@ -67,4 +69,36 @@ The KVServer should receive the message from applyCh **continuely**. When a mess
 We need to notify the notifier a period after creating the it.
 
 
+
+### B: Snapshots
+
+A rebooting server has to replay the complete persisted Raft log in order to restore its state. Modify kvserver to cooperate with Raft to save log space, and reduce the restart time.
+
+#### Basic
+
+- [ ] Detect when to snapshot
+- [ ] Create and read a snapshot
+- [ ] Implement snapshot when start
+
+#### Detect when to snapshot
+
+The kvserver start with `maxraftstate`, check the definition of `ApplyMsg`, `SnapshotValid` parameter carries the information about snapshot. Every time we receive from applyCh, we should check the parameter:
+
+-  If it is valid, read the snapshot and implement it.
+- Else, apply the operation to kvserver's database and return to client. Then, compare `maxraftstate` with `kv.persister.RaftStateSize()` to detect whether to snapshot.
+
+#### Make and read snapshot
+
+As we can see in the [diagram](https://pdos.csail.mit.edu/6.824/notes/raft_diagram.pdf), kvserver can directly connect with Persistent Storage.
+
+As we said in Raft lecture, we need to snapshot the key/value message and highest applied operation id.
+
+- Read: read the snapshot from buffer and **decode** into database and max applied operation id.
+- Write: **encode** the database and max applied operation id into Persistent Storage, also, we need to save a snapshot by calling Raft's `Snapshot()`.
+
+#### Implement Snapshot when start
+
+Following the instruction. If `maxraftstate != -1`, it means snapshot operation is valid and if the persister records snapshot information (`persister.SnapshotIsze() > 0`), read the snapshot as we said above.
+
+Remember the snapshot contains database and max applied operation id informations, so we needn't to init it twice after snapshot.
 

@@ -27,6 +27,8 @@ type KVServer struct {
 	dead      int32 // set by Kill()
 	persister *raft.Persister
 
+	snapshotEnable bool
+
 	maxraftstate          int // snapshot if log grows this big
 	maxAppliedOpIdofClerk map[int64]int
 	db                    map[string]string
@@ -85,10 +87,16 @@ func StartKVServer(servers []*labrpc.ClientEnd, me int, persister *raft.Persiste
 	kv.persister = persister
 	kv.maxraftstate = maxraftstate
 
-	kv.db = make(map[string]string)
-	kv.maxAppliedOpIdofClerk = make(map[int64]int)
-	kv.NotifierOfClerk = map[int64]*Notifier{}
+	kv.snapshotEnable = maxraftstate != -1
 
+	if kv.snapshotEnable && kv.persister.SnapshotSize() > 0 {
+		kv.readSnapShot(kv.persister.ReadSnapshot())
+	} else {
+		kv.db = make(map[string]string)
+		kv.maxAppliedOpIdofClerk = make(map[int64]int)
+	}
+
+	kv.NotifierOfClerk = map[int64]*Notifier{}
 	// You may need initialization code here.
 
 	kv.applyCh = make(chan raft.ApplyMsg)
