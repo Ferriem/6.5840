@@ -19,6 +19,8 @@ gitGraph
   commit id: "kv-without-snapshot"
   branch kv-with-snapshot
   commit id: "kv-with-snapshot"
+  branch ShardCtrler
+  commit id: "ShardCtrler"
 ```
 
 
@@ -47,8 +49,22 @@ Raft: [Lecture](md/Lecture-5.md)
 
 ![kvserver](./md/image/kvserver.png)
 
-Linearizability: [Lecture](md/lecture-9.md)
+[Linearizability](md/lecture-9.md)
 
-ZooKeeper: [Lecture](md/lecture-10.md)
+[ZooKeeper](md/lecture-10.md)
+
+[Chain Replication](md/lecture-11.md)
+
+[Disrtibuted Transactions](md/lecture-12.md)
+
+[Frangipani](md/lecture-13.md)
 
 [Lab](md/Lab-3.md)
+
+### Lab 4:Sharded Key/Value Service
+
+[Spanner](md/lecture-14.md)
+
+[FaRM](md/lecture-15.md)
+
+[Lab](md/Lab-4.md)
