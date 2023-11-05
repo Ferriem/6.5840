@@ -49,22 +49,22 @@ Raft: [Lecture](md/Lecture-5.md)
 
 ![kvserver](./md/image/kvserver.png)
 
-[Linearizability](md/lecture-9.md)
+[Linearizability](md/Lecture-9.md)
 
-[ZooKeeper](md/lecture-10.md)
+[ZooKeeper](md/Lecture-10.md)
 
-[Chain Replication](md/lecture-11.md)
+[Chain Replication](md/Lecture-11.md)
 
-[Disrtibuted Transactions](md/lecture-12.md)
+[Disrtibuted Transactions](md/Lecture-12.md)
 
-[Frangipani](md/lecture-13.md)
+[Frangipani](md/Lecture-13.md)
 
 [Lab](md/Lab-3.md)
 
 ### Lab 4:Sharded Key/Value Service
 
-[Spanner](md/lecture-14.md)
+[Spanner](md/Lecture-14.md)
 
-[FaRM](md/lecture-15.md)
+[FaRM](md/Lecture-15.md)
 
 [Lab](md/Lab-4.md)
