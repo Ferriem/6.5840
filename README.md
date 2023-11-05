@@ -41,8 +41,8 @@ Raft: [Lecture](md/Lecture-5.md)
 
 ### Lab 3:KV Service
 
-Linearizability: [Lecture](md/lecture-9.md)
+Linearizability: [Lecture](md/Lecture-9.md)
 
-ZooKeeper: [Lecture](md/lecture-10.md)
+ZooKeeper: [Lecture](md/Lecture-10.md)
 
 [Lab](md/Lab-3.md)
