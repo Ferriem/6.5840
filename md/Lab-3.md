@@ -32,7 +32,7 @@ KVServers ->> Clerks: return if Get()
 - When many clients commit operation in parallel, the command from applych may probably differ what we just propose. We need to implement a notifier to record the state of command.
 - Another thing to notice is duplicated operation. While `Get()` is idempotent, `Append()` and `Put()` may cause something unpredictable.
 
-#### Structrue
+#### Structure
 
 In order to detect duplication, we need to record every **Clerk num and Op num**. With the parameter, we can detect whether the operation is judged.
 

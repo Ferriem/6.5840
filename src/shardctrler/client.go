@@ -13,9 +13,9 @@ import (
 )
 
 type Clerk struct {
-	servers []*labrpc.ClientEnd
-	ClerkID int64
-
+	servers  []*labrpc.ClientEnd
+	ClerkId  int64
+	NextOpId int
 	// Your data here.
 }
 
@@ -29,20 +29,30 @@ func nrand() int64 {
 func MakeClerk(servers []*labrpc.ClientEnd) *Clerk {
 	ck := new(Clerk)
 	ck.servers = servers
+	ck.ClerkId = nrand()
+	ck.NextOpId = 0
 	// Your code here.
 	return ck
 }
 
+func (ck *Clerk) allocateOpId() int {
+	opId := ck.NextOpId
+	ck.NextOpId++
+	return opId
+}
+
 func (ck *Clerk) Query(num int) Config {
-	args := &QueryArgs{}
-	// Your code here.
-	args.Num = num
+	args := &QueryArgs{
+		Num:     num,
+		ClerkId: ck.ClerkId,
+		OpId:    ck.allocateOpId(),
+	}
 	for {
 		// try each known server.
 		for _, srv := range ck.servers {
 			var reply QueryReply
 			ok := srv.Call("ShardCtrler.Query", args, &reply)
-			if ok && reply.WrongLeader == false {
+			if ok && reply.Err != WrongLeader {
 				return reply.Config
 			}
 		}
@@ -51,16 +61,19 @@ func (ck *Clerk) Query(num int) Config {
 }
 
 func (ck *Clerk) Join(servers map[int][]string) {
-	args := &JoinArgs{}
+	args := &JoinArgs{
+		Servers: servers,
+		ClerkId: ck.ClerkId,
+		OpId:    ck.allocateOpId(),
+	}
 	// Your code here.
-	args.Servers = servers
 
 	for {
 		// try each known server.
 		for _, srv := range ck.servers {
 			var reply JoinReply
 			ok := srv.Call("ShardCtrler.Join", args, &reply)
-			if ok && reply.WrongLeader == false {
+			if ok && reply.Err != WrongLeader {
 				return
 			}
 		}
@@ -69,16 +82,19 @@ func (ck *Clerk) Join(servers map[int][]string) {
 }
 
 func (ck *Clerk) Leave(gids []int) {
-	args := &LeaveArgs{}
+	args := &LeaveArgs{
+		GIDs:    gids,
+		ClerkId: ck.ClerkId,
+		OpId:    ck.allocateOpId(),
+	}
 	// Your code here.
-	args.GIDs = gids
 
 	for {
 		// try each known server.
 		for _, srv := range ck.servers {
 			var reply LeaveReply
 			ok := srv.Call("ShardCtrler.Leave", args, &reply)
-			if ok && reply.WrongLeader == false {
+			if ok && reply.Err != WrongLeader {
 				return
 			}
 		}
@@ -87,17 +103,20 @@ func (ck *Clerk) Leave(gids []int) {
 }
 
 func (ck *Clerk) Move(shard int, gid int) {
-	args := &MoveArgs{}
+	args := &MoveArgs{
+		Shard:   shard,
+		GID:     gid,
+		ClerkId: ck.ClerkId,
+		OpId:    ck.allocateOpId(),
+	}
 	// Your code here.
-	args.Shard = shard
-	args.GID = gid
 
 	for {
 		// try each known server.
 		for _, srv := range ck.servers {
 			var reply MoveReply
 			ok := srv.Call("ShardCtrler.Move", args, &reply)
-			if ok && reply.WrongLeader == false {
+			if ok && reply.Err != WrongLeader {
 				return
 			}
 		}
