@@ -35,7 +35,7 @@ RPC and Threads: [Lecture](md/Lecture-2.md)
 
 ![raft-diagram](./md/image/raft-diagram.png)
 
-GFS: [Lecture](md/lecture-3.md)
+GFS: [Lecture](md/Lecture-3.md)
 
 Primary-Backup Replication: [Lecture](md/Lecture-4.md)
 
@@ -47,8 +47,8 @@ Raft: [Lecture](md/Lecture-5.md)
 
 ![kvserver](./md/image/kvserver.png)
 
-Linearizability: [Lecture](md/lecture-9.md)
+Linearizability: [Lecture](md/Lecture-9.md)
 
-ZooKeeper: [Lecture](md/lecture-10.md)
+ZooKeeper: [Lecture](md/Lecture-10.md)
 
 [Lab](md/Lab-3.md)
