@@ -21,6 +21,8 @@ gitGraph
   commit id: "kv-with-snapshot"
   branch ShardCtrler
   commit id: "ShardCtrler"
+  branch ShardKV
+  commit id: "ShardKV"
 ```
 
 
@@ -67,4 +69,7 @@ Raft: [Lecture](md/Lecture-5.md)
 
 [FaRM](md/Lecture-15.md)
 
+[DynamoDB](md/Lecture-16.md)
+
 [Lab](md/Lab-4.md)
+
