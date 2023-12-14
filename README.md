@@ -73,3 +73,10 @@ Raft: [Lecture](md/Lecture-5.md)
 
 [Lab](md/Lab-4.md)
 
+ShardCtrler:
+
+![ShardCtrler](./md/image/ShardCtrler.png)
+
+ShardKV:
+
+![ShardKV](./md/image/ShardKV.png)
