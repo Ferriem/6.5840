@@ -1,18 +1,16 @@
 package shardkv
 
+import (
+	"encoding/gob"
+	"sync"
+	"sync/atomic"
+	"time"
 
-import "6.5840/labrpc"
-import "6.5840/raft"
-import "sync"
-import "6.5840/labgob"
-
-
-
-type Op struct {
-	// Your definitions here.
-	// Field names must start with capital letters,
-	// otherwise RPC will break.
-}
+	"6.5840/labgob"
+	"6.5840/labrpc"
+	"6.5840/raft"
+	"6.5840/shardctrler"
+)
 
 type ShardKV struct {
 	mu           sync.Mutex
@@ -25,15 +23,156 @@ type ShardKV struct {
 	maxraftstate int // snapshot if log grows this big
 
 	// Your definitions here.
+	dead                  int32
+	maxAppliedOpIdofClerk map[int64]int
+	IndexToCommand        map[int]chan KVOp
+	LastApplied           int
+	StateMachine          KVStateMachine
+
+	sc            *shardctrler.Clerk
+	LastConfig    shardctrler.Config
+	PreConfig     shardctrler.Config
+	ShardState    map[int]string
+	ShardToClient map[int][]int64
+	ShardNum      map[int]int
+	OutedData     map[int]map[int]map[string]string // num -> shard -> key -> value
+	Pullchan      map[int]chan PullReply
 }
 
+func (kv *ShardKV) GetChan(index int) chan KVOp {
+	ch, ok := kv.IndexToCommand[index]
+	if !ok {
+		ch = make(chan KVOp, 1)
+		kv.IndexToCommand[index] = ch
+	}
+	return ch
+}
 
 func (kv *ShardKV) Get(args *GetArgs, reply *GetReply) {
+	DPrintf("Get: %v", args)
 	// Your code here.
+	if kv.killed() {
+		reply.Err = ErrWrongLeader
+		return
+	}
+	isLeader := kv.isLeader()
+	if !isLeader {
+		reply.Err = ErrWrongLeader
+		return
+	}
+	kv.mu.Lock()
+	if !kv.CheckGroup(args.Key) || kv.ShardState[key2shard(args.Key)] != OK {
+		reply.Err = ErrWrongGroup
+		kv.mu.Unlock()
+		return
+	}
+
+	op := KVOp{
+		Key:      args.Key,
+		Command:  GET,
+		OpId:     args.OpId,
+		ClientId: args.ClientId,
+	}
+
+	index, _, isLeader := kv.rf.Start(Op{ShardValid: false, Cmd: op})
+	//DPrintf("Start Get, index %v", index)
+	if !isLeader {
+		reply.Err = ErrWrongLeader
+		kv.mu.Unlock()
+		return
+	}
+
+	ch := kv.GetChan(index)
+	kv.mu.Unlock()
+
+	select {
+	case result := <-ch:
+		if result.ClientId == op.ClientId && result.OpId == op.OpId {
+			reply.Value = result.Value
+			//DPrintf("Get %v success, value %v", op.Key, reply.Value)
+			if reply.Value != "" {
+				reply.Err = OK
+			} else {
+				reply.Err = ErrNoKey
+			}
+		} else {
+			reply.Err = ErrWrongLeader
+		}
+	case <-time.After(time.Millisecond * 200):
+		//DPrintf("Get Timeout")
+		reply.Err = ErrWrongLeader
+	}
+	go func() {
+		kv.mu.Lock()
+		delete(kv.IndexToCommand, index)
+		kv.mu.Unlock()
+	}()
+
 }
 
 func (kv *ShardKV) PutAppend(args *PutAppendArgs, reply *PutAppendReply) {
 	// Your code here.
+	DPrintf("PutAppend: %v", args)
+	if kv.killed() {
+		reply.Err = ErrWrongLeader
+		return
+	}
+	isLeader := kv.isLeader()
+	if !isLeader {
+		reply.Err = ErrWrongLeader
+		return
+	}
+	kv.mu.Lock()
+	if !kv.CheckGroup(args.Key) || kv.ShardState[key2shard(args.Key)] != OK {
+		reply.Err = ErrWrongGroup
+		kv.mu.Unlock()
+		return
+	}
+	if kv.maxAppliedOpIdofClerk[args.ClientId] >= args.OpId {
+		reply.Err = OK
+		kv.mu.Unlock()
+		return
+	}
+	intcmd := 0
+	switch args.Op {
+	case Put:
+		intcmd = PUT
+	case Append:
+		intcmd = APPEND
+	}
+	op := KVOp{
+		Key:      args.Key,
+		Value:    args.Value,
+		Command:  intcmd,
+		OpId:     args.OpId,
+		ClientId: args.ClientId,
+	}
+	index, _, isLeader := kv.rf.Start(Op{ShardValid: false, Cmd: op})
+	if !isLeader {
+		reply.Err = ErrWrongLeader
+		kv.mu.Unlock()
+		return
+	}
+	ch := kv.GetChan(index)
+	kv.mu.Unlock()
+	select {
+	case result := <-ch:
+		if result.ClientId == op.ClientId && result.OpId == op.OpId {
+			//DPrintf("PutAppend success")
+			reply.Err = OK
+		} else {
+			reply.Err = ErrWrongLeader
+		}
+	case <-time.After(time.Millisecond * 200):
+		//DPrintf("PutAppend Timeout")
+		reply.Err = ErrWrongLeader
+	}
+
+	go func() {
+		kv.mu.Lock()
+		delete(kv.IndexToCommand, index)
+		kv.mu.Unlock()
+	}()
 }
 
 // the tester calls Kill() when a ShardKV instance won't
@@ -41,10 +180,15 @@ func (kv *ShardKV) PutAppend(args *PutAppendArgs, reply *PutAppendReply) {
 // in Kill(), but it might be convenient to (for example)
 // turn off debug output from this instance.
 func (kv *ShardKV) Kill() {
+	atomic.StoreInt32(&kv.dead, 1)
 	kv.rf.Kill()
 	// Your code here, if desired.
 }
 
+func (kv *ShardKV) killed() bool {
+	z := atomic.LoadInt32(&kv.dead)
+	return z == 1
+}
 
 // servers[] contains the ports of the servers in this group.
 //
@@ -83,6 +227,7 @@ func StartServer(servers []*labrpc.ClientEnd, me int, persister *raft.Persister,
 	kv.make_end = make_end
 	kv.gid = gid
 	kv.ctrlers = ctrlers
+	kv.sc = shardctrler.MakeClerk(ctrlers)
 
 	// Your initialization code here.
 
@@ -91,7 +236,28 @@ func StartServer(servers []*labrpc.ClientEnd, me int, persister *raft.Persister,
 
 	kv.applyCh = make(chan raft.ApplyMsg)
 	kv.rf = raft.Make(servers, me, persister, kv.applyCh)
-
-
+	kv.maxAppliedOpIdofClerk = make(map[int64]int)
+	kv.IndexToCommand = make(map[int]chan KVOp)
+	kv.LastApplied = 0
+	kv.StateMachine = &KV{make(map[int]map[string]string)}
+	kv.OutedData = make(map[int]map[int]map[string]string)
+	kv.ShardState = make(map[int]string)
+	kv.LastConfig = shardctrler.Config{Num: 0, Groups: map[int][]string{}}
+	kv.PreConfig = shardctrler.Config{Num: 0, Groups: map[int][]string{}}
+	kv.ShardToClient = make(map[int][]int64)
+	kv.ShardNum = make(map[int]int)
+	kv.Pullchan = make(map[int]chan PullReply)
+	snapshot := persister.ReadSnapshot()
+	if len(snapshot) > 0 {
+		kv.DecodeSnapShot(snapshot)
+	}
+	go kv.applier()
+	go kv.UpdateConfig()
+	gob.Register(KVOp{})
+	gob.Register(ShardOp{})
 	return kv
+}
+
+func (kv *ShardKV) CheckGroup(key string) bool {
+	return kv.PreConfig.Shards[key2shard(key)] == kv.gid
 }
